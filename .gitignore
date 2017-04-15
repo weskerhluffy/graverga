@@ -1,0 +1,8 @@
+
+*.plist
+
+src/graverga
+
+src/graverga.dSYM/Contents/Resources/DWARF/graverga
+
+src/shit
