@@ -58,6 +58,8 @@ typedef enum BOOLEANOS {
 #define CACA_COMUN_TIPO_ASSERT CACA_COMUN_ASSERT_DUROTE
 
 #define assert_timeout_dummy(condition) 0;
+static inline void caca_log_debug_dummy(const char *format, ...) {
+}
 
 #if CACA_COMUN_TIPO_ASSERT == CACA_COMUN_ASSERT_DUROTE
 #define assert_timeout(condition) assert(condition);
@@ -80,7 +82,7 @@ typedef enum BOOLEANOS {
 		} \
 		while(0);
 #else
-#define caca_log_debug(formato, args...) 0
+#define caca_log_debug caca_log_debug_dummy
 #endif
 
 #define caca_comun_max(x,y) ((x) < (y) ? (y) : (x))
@@ -195,6 +197,8 @@ void caca_log_debug_func(const char *format, ...) {
 // XXX: http://stackoverflow.com/questions/1716296/why-does-printf-not-flush-after-the-call-unless-a-newline-is-in-the-format-strin
 	setbuf(stdout, NULL );
 }
+
+#ifdef CACA_COMUN_LOG
 static char *caca_comun_arreglo_a_cadena(tipo_dato *arreglo, int tam_arreglo,
 		char *buffer) {
 	int i;
@@ -240,7 +244,7 @@ static char *caca_comun_arreglo_a_cadena_natural(natural *arreglo,
 	*(ap_buffer + characteres_escritos) = '\0';
 	return ap_buffer;
 }
-
+#endif
 void caca_comun_strreplace(char s[], char chr, char repl_chr) {
 	int i = 0;
 	while (s[i] != '\0') {
@@ -308,20 +312,22 @@ static inline int caca_comun_lee_matrix_long_stdin(tipo_dato *matrix,
 
 typedef struct bit_ch {
 	natural num_nodos_bit_ch;
-	tipo_dato nodos_bit_ch[BIT_CH_MAX_NODOS ];
+	tipo_dato nodos_bit_ch[BIT_CH_MAX_NODOS + 1];
 } bit_ch;
 
+static inline void bit_ch_aumenta(bit_ch *bit, tipo_dato nuevo_valor,
+		natural idx);
 static inline void bit_ch_init(bit_ch *bit, tipo_dato valor_inicial,
 		natural num_cacas) {
 	tipo_dato *nodos = bit->nodos_bit_ch;
-	for (natural i = 0; i <= num_cacas; i++) {
-		nodos[i] = valor_inicial;
-	}
-	for (natural i = num_cacas + 1; i < BIT_CH_MAX_NODOS ; i++) {
-		nodos[i] = BIT_CH_VALOR_INVALIDO;
+
+	nodos[0] = BIT_CH_VALOR_INVALIDO;
+	for (natural i = 1; i < BIT_CH_MAX_NODOS ; i++) {
+		nodos[i] = 0;
 	}
 	bit->num_nodos_bit_ch = num_cacas;
 
+	bit_ch_aumenta(bit, valor_inicial, 1);
 }
 
 static inline void bit_ch_aumenta(bit_ch *bit, tipo_dato nuevo_valor,
