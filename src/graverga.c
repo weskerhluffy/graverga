@@ -7,6 +7,7 @@
  Description : Hello World in C, Ansi-style
  ============================================================================
  https://www.codechef.com/problems/SPREAD
+ https://www.quora.com/CodeChef-What-are-some-suggestions-for-problems-where-Binary-Indexed-Tree-BIT-Fenwick-Tree-is-the-primary-concept
  */
 
 #define _GNU_SOURCE
